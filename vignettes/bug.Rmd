@@ -1,0 +1,34 @@
+---
+title: "bug"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{bug}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+When we use furrr as part of the package development process my expectation is that code will be passed from the loaded environment down to the workers. 
+But this doesn't happen in multisession. When the package isn't installed we get an error.
+
+```{r, include = FALSE}
+library(furrr)
+devtools::uninstall()
+devtools::load_all()
+plan(sequential)
+furrr_func(5) # Succeeds
+
+plan(multisession)
+furrr_func(5) # Fails
+```
+
+When we install the package we get the correct behaviour.
+
+```{r setup}
+library(furrr)
+devtools::install()
+devtools::load_all()
+plan(sequential)
+furrr_func(5) # Succeeds
+
+plan(multisession)
+furrr_func(5) # Fails
+```
